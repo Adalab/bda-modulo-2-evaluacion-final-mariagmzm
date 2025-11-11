@@ -137,7 +137,50 @@ WHERE actor_id IS NULL;
 
 -- 16. Encuentra el título de todas las películas que fueron lanzadas entre el año 2005 y 2010.
 
-SELECT release_year
-FROM film
+SELECT title, release_year
+FROM film 
 WHERE release_year BETWEEN 2005 AND 2010;
+
+-- 17.Encuentra el título de todas las películas que son de la misma categoría que "Family"
+
+SELECT f.title, `c`.`name`
+FROM film AS f
+INNER JOIN film_category AS fc ON f.film_id = fc.film_id
+INNER JOIN category AS c ON c.category_id = fc.category_id
+WHERE `c`.`name` = 'Family';
+
+-- 18. Muestra el nombre y apellido de los actores que aparecen en más de 10 películas
+
+SELECT *  -- primera consulta para ver como se relacionan las tablas
+FROM film_actor;
+ 
+SELECT a.first_name, a.last_name, fa.film_id -- consulta para ver los nombres y los id de las peliculas que han hecho cada uno
+FROM actor AS a 
+INNER JOIN film_actor AS fa ON a.actor_id = fa.actor_id; 
+
+
+SELECT a.first_name, a.last_name, COUNT(fa.film_id) AS 'total peliculas' -- con esta consulta averiguamos cuantas peliculas ha hecho cada uno en total
+FROM actor AS a                                                          
+INNER JOIN film_actor AS fa ON a.actor_id = fa.actor_id
+GROUP BY a.actor_id; -- agrupandolos por actor no nos hace falta poner un distinc
+
+SELECT a.first_name, a.last_name, COUNT(fa.film_id) AS 'total peliculas' -- ultima consulta para filtrar los que tienen mas de 10 peliculas
+FROM actor AS a 
+INNER JOIN film_actor AS fa ON a.actor_id = fa.actor_id
+GROUP BY a.actor_id
+HAVING COUNT(fa.film_id) >= 10;
+
+-- 19. Encuentra el título de todas las películas que son "R" y tienen una duración mayor a 2 horas en la tabla film
+
+SELECT title, `length` -- primera consulta para averiguar las peliculas que duran mas de 2 horas(120min)
+FROM film  
+WHERE `length` > 120;
+
+SELECT title, `length`, rating
+FROM film
+WHERE rating = 'R' AND `length` > 120;
+
+
+
+
 
