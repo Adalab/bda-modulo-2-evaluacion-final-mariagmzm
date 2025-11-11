@@ -42,44 +42,55 @@ El archivo sql.sql cubre una amplia gama de habilidades SQL:
 
 Ejemplo:
 
-SELECT actor_id, first_name, last_name
-
-FROM actor
-
-WHERE actor_id BETWEEN 10 AND 20
-
-ORDER BY actor_id ASC;
+    SELECT actor_id, first_name, last_name
+    FROM actor
+    WHERE actor_id BETWEEN 10 AND 20
+    ORDER BY actor_id ASC;
 
 - Agregación y Agrupamiento: Uso de COUNT(), AVG(), GROUP BY, y la cláusula HAVING.
 
 Ejemplo:
 
-SELECT a.first_name, a.last_name, COUNT(fa.film_id) AS 'total peliculas' 
-
-FROM actor AS a 
-
-INNER JOIN film_actor AS fa ON a.actor_id = fa.actor_id
-
-GROUP BY a.actor_id
-
-HAVING COUNT(fa.film_id) >= 10;
+    SELECT a.first_name, a.last_name, COUNT(fa.film_id) AS 'total peliculas' 
+    FROM actor AS a 
+    INNER JOIN film_actor AS fa ON a.actor_id = fa.actor_id
+    GROUP BY a.actor_id
+    HAVING COUNT(fa.film_id) >= 10;
 
 - Combinación de Tablas (JOINs): Uso de INNER JOIN y LEFT JOIN para combinar información de customer, rental, film, y actor.
 
+Ejemplo:
+
+    SELECT `c`.`name` AS 'categoría' , COUNT(rental_id) AS 'Total de alquileres'
+    FROM category AS c LEFT JOIN film_category AS fc ON c.category_id = fc.category_id
+    LEFT JOIN film AS f ON f.film_id = fc.film_id
+    LEFT JOIN inventory AS i ON i.film_id = fc.film_id
+    LEFT JOIN rental AS r ON r.inventory_id = i.inventory_id
+    GROUP BY `c`.`name`
+
 - Subconsultas: Aplicación de subconsultas en cláusulas WHERE (e.g., ejercicios 22 y 23) para lógica de exclusión (NOT IN) y filtrado avanzado.
+
+Ejemplo:
+ 
+    SELECT a.first_name, a.last_name 
+    FROM actor AS a
+    WHERE actor_id NOT IN (
+                        SELECT a.actor_id
+						FROM actor AS a
+						INNER JOIN  film_actor AS fa ON a.actor_id = fa.actor_id
+						INNER JOIN film AS f ON f.film_id = fa.film_id
+						INNER JOIN film_category AS fc ON fc.film_id = f.film_id
+						INNER JOIN category AS c ON c.category_id = fc.category_id
+						WHERE `c`.`name` = 'Horror');   
 
 - Funciones de Fecha: Utilización de DATEDIFF para calcular la duración de los alquileres.
 
 Ejemplo:
 
-SELECT DISTINCT f.title
-
-FROM film  AS f
-
-INNER JOIN inventory AS i ON i.film_id = f.film_id
-
-WHERE i.inventory_id IN (
-
+    SELECT DISTINCT f.title
+    FROM film  AS f
+    INNER JOIN inventory AS i ON i.film_id = f.film_id
+    WHERE i.inventory_id IN (
                 SELECT r.inventory_id
                 FROM rental AS r
 				WHERE DATEDIFF(return_date, rental_date) > 5);
