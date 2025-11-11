@@ -243,16 +243,11 @@ WHERE `c`.`name` = 'Horror');
 
 -- 24. Encuentra el título de las películas que son comedias y tienen una duración mayor a 180 minutos en la tabla film.
 
-
-
-
-
-
-
-
-
-                                      
-
+SELECT f.title, `c`.`name`, `f`.`length`
+FROM film AS f
+INNER JOIN film_category AS fc ON F.film_id = fc.film_id
+INNER JOIN category AS c ON c.category_id = fc.category_id
+WHERE `length` > 180 AND c.name = 'Comedy';
 
 
 
