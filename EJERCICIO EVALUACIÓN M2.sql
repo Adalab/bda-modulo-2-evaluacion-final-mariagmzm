@@ -92,3 +92,52 @@ GROUP BY `c`.`name`;
 SELECT *
 FROM film;
 
+SELECT rating, AVG(`length`)
+FROM film
+GROUP BY rating;
+
+SELECT COUNT(DISTINCT rating) -- esta es solo una consulta de comprobacion para saber cuantas clasificaciones distintas tenemos
+FROM film;
+
+-- 13. Encuentra el nombre y apellido de los actores que aparecen en la película con title "Indian Love".
+
+SELECT a.first_name, a.last_name, f.title -- buscamos f.title para comprobar que efectivamente, son los actores de la pelicula que buscamos
+FROM actor AS a 
+INNER JOIN film_actor AS fa ON fa.actor_id = a.actor_id
+INNER JOIN film AS f ON f.film_id = fa.film_id
+WHERE title = 'Indian Love';
+
+SELECT a.first_name, a.last_name -- esta seria la consulta tal cual nos la han pedido
+FROM actor AS a 
+INNER JOIN film_actor AS fa ON fa.actor_id = a.actor_id
+INNER JOIN film AS f ON f.film_id = fa.film_id
+WHERE title = 'Indian Love';
+
+-- 14. Muestra el título de todas las películas que contengan la palabra "dog" o "cat" en su descripción.
+
+SELECT title, `description`
+FROM film 
+WHERE `description` LIKE '%dog%' OR `description` LIKE '%cat%'; 
+
+-- 15.Hay algún actor o actriz que no aparezca en ninguna película en la tabla film_actor.
+
+SELECT DISTINCT actor_id -- primero consulto los distintos id de los actores, ya que al hacer la primera consulta sin el distinct, me salian varias veces el mismo id
+FROM film_actor;
+
+SELECT first_name, last_name
+FROM actor 
+WHERE actor_id NOT IN (
+                      SELECT DISTINCT actor_id  
+                      FROM film_actor);
+			
+SELECT DISTINCT actor_id  -- Ultima consulta para ver que no haya ningun valor nulo
+FROM film_actor
+WHERE actor_id IS NULL;
+
+
+-- 16. Encuentra el título de todas las películas que fueron lanzadas entre el año 2005 y 2010.
+
+SELECT release_year
+FROM film
+WHERE release_year BETWEEN 2005 AND 2010;
+
